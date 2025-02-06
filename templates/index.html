@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecção de Objetos com YOLOv8</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    <style>
+        body { background-color: #f8f9fa; text-align: center; }
+        .video-container { margin-top: 20px; }
+        video, img { border: 2px solid #007bff; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Detecção de Objetos com YOLOv8</h1>
+        <p class="lead">A câmera detecta objetos e os exibe em tempo real.</p>
+
+        <div class="video-container">
+            <video id="camera" autoplay playsinline></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="processedImage" class="img-fluid mt-3" />
+        </div>
+
+        <div class="mt-4">
+            <h3>Objetos Detectados: <span id="detectedObjects">Nenhum</span></h3>
+        </div>
+    </div>
+
+    <script>
+        async function startCamera() {
+            try {
+                const constraints = {
+                    video: { facingMode: { ideal: "environment" } } // Usa traseira no celular, mas funciona no PC
+                };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                document.getElementById('camera').srcObject = stream;
+            } catch (error) {
+                console.error("Erro ao acessar a câmera:", error);
+            }
+        }
+
+        async function captureAndSendFrame() {
+            const video = document.getElementById('camera');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL('image/jpeg');
+
+            const response = await fetch('/detect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageData })
+            });
+
+            const result = await response.json();
+
+            
+
+            if (result.objects.length > 0) {
+                document.getElementById('detectedObjects').textContent = result.objects.join(", ");
+                responsiveVoice.speak("Objeto detectado: " + result.objects.join(", "), "Brazilian Portuguese Female");
+            }
+        }
+
+        startCamera();
+        setInterval(captureAndSendFrame, 8000);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
