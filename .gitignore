@@ -1,0 +1,20 @@
+# Ignorar a pasta do ambiente virtual
+venv/
+
+# Ignorar arquivos do sistema operacional
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Ignorar arquivos do VS Code
+.vscode/
+
+# Ignorar arquivos do Jupyter Notebook
+.ipynb_checkpoints/
+
+# Ignorar arquivos de credenciais
+.env
+
+# Ignorar arquivos de modelos do YOLO
+yolo-Weights/*.pt
