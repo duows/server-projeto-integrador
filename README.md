@@ -47,8 +47,8 @@ O sistema segue a arquitetura cliente-servidor com Flask:
 
 ### 🔹 **1. Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/duows/server-projeto-integrador
+cd server-projeto-integrador
 ```
 
 ### 🔹 **2. Crie um ambiente virtual (Recomendado)**
